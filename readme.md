@@ -1,17 +1,17 @@
 
 crear un gateway y microservicios
-
+```sh
+npx -p generator-jhipster jhipster jdl tienda.jdl
+``
 
 # crear el gateway
 ```sh
-npx -p generator-jhipster jhipster jdl tienda.jdl
-
 cd gateway
 ./mvnw
 npm start
 
 ```
-# crear el microservicios
+# crear los microservicios
 ```sh
 cd inventory
 ./mvnw
