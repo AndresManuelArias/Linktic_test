@@ -23,4 +23,10 @@ cd products
 ver la version utilizada 
 ```sh
 sdk current java
+nvm ls
 ```
+
+# Requerimientos
+tener 
+java version 21.0.2-tem
+node v24.13.0
