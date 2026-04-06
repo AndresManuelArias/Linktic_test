@@ -1,0 +1,24 @@
+{
+  "generator-jhipster": {
+    "applicationIndex": 1,
+    "applicationType": "microservice",
+    "authenticationType": "jwt",
+    "baseName": "products",
+    "buildTool": "maven",
+    "databaseType": "sql",
+    "devDatabaseType": "postgresql",
+    "enableHibernateCache": false,
+    "entities": ["Product"],
+    "jhipsterVersion": "9.0.0",
+    "jwtSecretKey": "MmJhMzJiZGZiOWJlNjNlNTA3ZGEyYWNhMWMzMWM5MDUxMGYxZTg5NWJiZjk2YmUwMDZkOWM2YzMyZmNkNWU3YzdiM2U4ZTVlMTlmM2I2ZTcxMTE0NzlhNWZiZWZlZTcyNjVhMmRjNjA1ZGNjODU2YzgzODgzMjBlZTMwYWYwNGU=",
+    "languages": ["en"],
+    "lastLiquibaseTimestamp": 1775510737000,
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "packageName": "com.tienda.products",
+    "prodDatabaseType": "postgresql",
+    "serverPort": "8081",
+    "skipClient": true,
+    "skipCommitHook": true
+  }
+}

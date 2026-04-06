@@ -1,0 +1,66 @@
+application {
+  config {
+    baseName gateway,
+    applicationType gateway,
+    packageName com.tienda.gateway,
+    authenticationType jwt,
+    buildTool maven,
+    clientFramework vue,
+    testFrameworks [cypress]
+  }
+}
+
+application {
+  config {
+    baseName products,
+    applicationType microservice,
+    packageName com.tienda.products,
+    authenticationType jwt,
+    buildTool maven,
+    databaseType sql,
+    devDatabaseType postgresql,
+    prodDatabaseType postgresql,
+    serverPort 8081,
+    enableHibernateCache false
+  }
+  entities Product
+}
+
+application {
+  config {
+    baseName inventory,
+    applicationType microservice,
+    packageName com.tienda.inventory,
+    authenticationType jwt,
+    buildTool maven,
+    databaseType mongodb,
+    serverPort 8082
+  }
+  entities Inventory
+}
+
+// --- Entidades ---
+
+entity Product {
+  sku String required unique,
+  name String required,
+  price BigDecimal required min(0),
+  status ProductStatus required,
+  createdAt Instant
+}
+
+enum ProductStatus {
+  ACTIVE, INACTIVE
+}
+
+entity Inventory {
+  productId UUID required,
+  available Integer required min(0),
+  reserved Integer,
+  version Long // Para control optimista solicitado
+}
+
+// --- Configuraciones ---
+dto * with mapstruct
+service * with serviceImpl
+paginate Product with pagination

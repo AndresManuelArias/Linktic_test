@@ -1,0 +1,35 @@
+{
+  "annotations": {
+    "changelogDate": "20260406212537"
+  },
+  "applications": ["inventory"],
+  "clientRootFolder": "inventory",
+  "databaseType": "mongodb",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "productId",
+      "fieldType": "UUID",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "available",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "reserved",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "version",
+      "fieldType": "Long"
+    }
+  ],
+  "microserviceName": "inventory",
+  "name": "Inventory",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

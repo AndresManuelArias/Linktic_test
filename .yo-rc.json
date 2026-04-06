@@ -1,0 +1,7 @@
+{
+  "generator-jhipster": {
+    "appsFolders": ["gateway", "products", "inventory"],
+    "baseName": "workspaces",
+    "deploymentType": "none"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "generator-jhipster": {
+    "applicationIndex": 2,
+    "applicationType": "microservice",
+    "authenticationType": "jwt",
+    "baseName": "inventory",
+    "buildTool": "maven",
+    "databaseType": "mongodb",
+    "entities": ["Inventory"],
+    "jhipsterVersion": "9.0.0",
+    "jwtSecretKey": "MzZlYjRiMjkwMTMyZTdhYzA1NTVhMzcyZmYyZGM4ZmFhNDMwMTY5MjI5NzllYWM3MzRjMTVkY2FhZDIwZDMzYzI0MmRjMTQ2Njc3MmIwYWFlZjI2MmIzYmNiYzlhY2FhYWQxOGUxMDE4MWQ4ZTYyNGNkZGIzMzI4ZTdiZTQ5OTQ=",
+    "languages": ["en"],
+    "lastLiquibaseTimestamp": 1775510737000,
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "packageName": "com.tienda.inventory",
+    "serverPort": "8082",
+    "skipClient": true,
+    "skipCommitHook": true
+  }
+}
