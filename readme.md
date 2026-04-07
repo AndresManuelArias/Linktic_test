@@ -26,6 +26,15 @@ sdk current java
 nvm ls
 ```
 
+
+#ingreso 
+http://localhost:9000
+usuario es admin
+
+Aqui puede ver todos los endpoint
+http://localhost:9000/admin/docs
+
+
 # Requerimientos
 tener 
 java version 21.0.2-tem
