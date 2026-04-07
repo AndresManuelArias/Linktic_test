@@ -1,8 +1,9 @@
 package com.tienda.inventory.service.dto;
 
-import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.util.UUID;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * A DTO for purchase request.
@@ -10,17 +11,17 @@ import java.util.UUID;
 public class PurchaseRequestDTO implements Serializable {
 
     @NotNull
-    private UUID productId;
+    private Long  productId;
 
     @NotNull
     @Min(value = 1)
     private Integer quantity;
 
-    public UUID getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(UUID productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 

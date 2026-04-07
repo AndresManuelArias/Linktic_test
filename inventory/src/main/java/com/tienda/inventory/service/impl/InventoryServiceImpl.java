@@ -88,7 +88,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Optional<InventoryDTO> findByProductId(UUID productId) {
+    public Optional<InventoryDTO> findByProductId(Long productId) {
         LOG.debug("Request to get Inventory by productId : {}", productId);
         return inventoryRepository.findByProductId(productId).map(inventoryMapper::toDto);
     }

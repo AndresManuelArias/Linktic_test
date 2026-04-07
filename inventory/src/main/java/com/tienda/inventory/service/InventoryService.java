@@ -56,7 +56,7 @@ public interface InventoryService {
      * @param productId the productId of the entity.
      * @return the entity.
      */
-    Optional<InventoryDTO> findByProductId(UUID productId);
+    Optional<InventoryDTO> findByProductId(Long productId);
 
     /**
      * Process a purchase.

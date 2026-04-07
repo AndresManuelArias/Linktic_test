@@ -1,10 +1,11 @@
 package com.tienda.inventory.repository;
 
-import com.tienda.inventory.domain.Inventory;
+import java.util.Optional;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
-import java.util.UUID;
+
+import com.tienda.inventory.domain.Inventory;
 
 /**
  * Spring Data MongoDB repository for the Inventory entity.
@@ -12,5 +13,5 @@ import java.util.UUID;
 @Repository
 public interface InventoryRepository extends MongoRepository<Inventory, String> {
 
-    Optional<Inventory> findByProductId(UUID productId);
+    Optional<Inventory> findByProductId(Long productId);
 }

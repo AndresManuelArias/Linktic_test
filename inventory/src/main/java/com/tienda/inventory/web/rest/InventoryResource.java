@@ -159,7 +159,7 @@ public class InventoryResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the inventoryDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/products/{productId}")
-    public ResponseEntity<InventoryDTO> getInventoryByProduct(@PathVariable("productId") UUID productId) {
+    public ResponseEntity<InventoryDTO> getInventoryByProduct(@PathVariable("productId") Long productId) {
         LOG.debug("REST request to get Inventory by productId : {}", productId);
         // Validate product exists
         try {
