@@ -1,17 +1,25 @@
 package com.tienda.inventory.service.impl;
 
+import com.tienda.inventory.client.ProductsClient;
 import com.tienda.inventory.domain.Inventory;
 import com.tienda.inventory.repository.InventoryRepository;
 import com.tienda.inventory.service.InventoryService;
+import com.tienda.inventory.service.PurchaseService;
 import com.tienda.inventory.service.dto.InventoryDTO;
+import com.tienda.inventory.service.dto.PurchaseDTO;
+import com.tienda.inventory.service.dto.PurchaseRequestDTO;
 import com.tienda.inventory.service.mapper.InventoryMapper;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Service Implementation for managing {@link com.tienda.inventory.domain.Inventory}.
@@ -25,9 +33,15 @@ public class InventoryServiceImpl implements InventoryService {
 
     private final InventoryMapper inventoryMapper;
 
-    public InventoryServiceImpl(InventoryRepository inventoryRepository, InventoryMapper inventoryMapper) {
+    private final PurchaseService purchaseService;
+
+    private final ProductsClient productsClient;
+
+    public InventoryServiceImpl(InventoryRepository inventoryRepository, InventoryMapper inventoryMapper, PurchaseService purchaseService, ProductsClient productsClient) {
         this.inventoryRepository = inventoryRepository;
         this.inventoryMapper = inventoryMapper;
+        this.purchaseService = purchaseService;
+        this.productsClient = productsClient;
     }
 
     @Override
@@ -71,6 +85,54 @@ public class InventoryServiceImpl implements InventoryService {
     public Optional<InventoryDTO> findOne(String id) {
         LOG.debug("Request to get Inventory : {}", id);
         return inventoryRepository.findById(id).map(inventoryMapper::toDto);
+    }
+
+    @Override
+    public Optional<InventoryDTO> findByProductId(UUID productId) {
+        LOG.debug("Request to get Inventory by productId : {}", productId);
+        return inventoryRepository.findByProductId(productId).map(inventoryMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public PurchaseDTO purchase(PurchaseRequestDTO request, String idempotencyKey) {
+        LOG.debug("Request to purchase : {}, key: {}", request, idempotencyKey);
+
+        // Check idempotency
+        Optional<PurchaseDTO> existingPurchase = purchaseService.findById(idempotencyKey);
+        if (existingPurchase.isPresent()) {
+            return existingPurchase.get();
+        }
+
+        // Validate product exists
+        try {
+            var response = productsClient.getProduct(request.getProductId());
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not found");
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product not found");
+        }
+
+        // Get inventory
+        Inventory inventory = inventoryRepository.findByProductId(request.getProductId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Inventory not found"));
+
+        // Check stock
+        if (inventory.getAvailable() < request.getQuantity()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock");
+        }
+
+        // Decrement stock
+        inventory.setAvailable(inventory.getAvailable() - request.getQuantity());
+        inventoryRepository.save(inventory);
+
+        // Save purchase
+        PurchaseDTO purchaseDTO = new PurchaseDTO();
+        purchaseDTO.setId(idempotencyKey);
+        purchaseDTO.setProductId(request.getProductId());
+        purchaseDTO.setQuantity(request.getQuantity());
+        return purchaseService.save(purchaseDTO);
     }
 
     @Override

@@ -1,8 +1,13 @@
 package com.tienda.inventory.web.rest;
 
+import java.util.UUID;
+import com.tienda.inventory.client.ProductsClient;
 import com.tienda.inventory.repository.InventoryRepository;
 import com.tienda.inventory.service.InventoryService;
+import com.tienda.inventory.service.PurchaseService;
 import com.tienda.inventory.service.dto.InventoryDTO;
+import com.tienda.inventory.service.dto.PurchaseDTO;
+import com.tienda.inventory.service.dto.PurchaseRequestDTO;
 import com.tienda.inventory.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -37,9 +42,15 @@ public class InventoryResource {
 
     private final InventoryRepository inventoryRepository;
 
-    public InventoryResource(InventoryService inventoryService, InventoryRepository inventoryRepository) {
+    private final ProductsClient productsClient;
+
+    private final PurchaseService purchaseService;
+
+    public InventoryResource(InventoryService inventoryService, InventoryRepository inventoryRepository, ProductsClient productsClient, PurchaseService purchaseService) {
         this.inventoryService = inventoryService;
         this.inventoryRepository = inventoryRepository;
+        this.productsClient = productsClient;
+        this.purchaseService = purchaseService;
     }
 
     /**
@@ -142,6 +153,28 @@ public class InventoryResource {
     }
 
     /**
+     * {@code GET  /inventories/products/:productId} : get the inventory for the product.
+     *
+     * @param productId the productId of the inventoryDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the inventoryDTO, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/products/{productId}")
+    public ResponseEntity<InventoryDTO> getInventoryByProduct(@PathVariable("productId") UUID productId) {
+        LOG.debug("REST request to get Inventory by productId : {}", productId);
+        // Validate product exists
+        try {
+            ResponseEntity<Void> response = productsClient.getProduct(productId);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new BadRequestAlertException("Product not found", ENTITY_NAME, "productnotfound");
+            }
+        } catch (Exception e) {
+            throw new BadRequestAlertException("Product not found", ENTITY_NAME, "productnotfound");
+        }
+        Optional<InventoryDTO> inventoryDTO = inventoryService.findByProductId(productId);
+        return ResponseUtil.wrapOrNotFound(inventoryDTO);
+    }
+
+    /**
      * {@code GET  /inventories/:id} : get the "id" inventory.
      *
      * @param id the id of the inventoryDTO to retrieve.
@@ -165,5 +198,22 @@ public class InventoryResource {
         LOG.debug("REST request to delete Inventory : {}", id);
         inventoryService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id)).build();
+    }
+
+    /**
+     * {@code POST  /purchases} : Create a new purchase.
+     *
+     * @param purchaseRequest the purchaseRequest to create.
+     * @param idempotencyKey the Idempotency-Key header.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new purchaseDTO.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/purchases")
+    public ResponseEntity<PurchaseDTO> createPurchase(@Valid @RequestBody PurchaseRequestDTO purchaseRequest, @RequestHeader("Idempotency-Key") String idempotencyKey) throws URISyntaxException {
+        LOG.debug("REST request to purchase : {}, key: {}", purchaseRequest, idempotencyKey);
+        PurchaseDTO result = inventoryService.purchase(purchaseRequest, idempotencyKey);
+        return ResponseEntity.created(new URI("/api/purchases/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, "inventoryPurchase", result.getId()))
+            .body(result);
     }
 }

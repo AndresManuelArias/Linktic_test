@@ -1,9 +1,11 @@
 package com.tienda.inventory.service.dto;
 
-import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * A DTO for the {@link com.tienda.inventory.domain.Inventory} entity.

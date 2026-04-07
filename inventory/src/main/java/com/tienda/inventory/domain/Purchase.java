@@ -1,22 +1,20 @@
 package com.tienda.inventory.domain;
 
+import jakarta.validation.constraints.*;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.UUID;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-
 /**
- * A Inventory.
+ * A Purchase.
  */
-@Document(collection = "inventory")
+@Document(collection = "purchase")
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class Inventory implements Serializable {
+public class Purchase implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -29,15 +27,12 @@ public class Inventory implements Serializable {
     private UUID productId;
 
     @NotNull
-    @Min(value = 0)
-    @Field("available")
-    private Integer available;
+    @Min(value = 1)
+    @Field("quantity")
+    private Integer quantity;
 
-    @Field("reserved")
-    private Integer reserved;
-
-    @Field("version")
-    private Long version;
+    @Field("created_at")
+    private Instant createdAt;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -45,7 +40,7 @@ public class Inventory implements Serializable {
         return this.id;
     }
 
-    public Inventory id(String id) {
+    public Purchase id(String id) {
         this.setId(id);
         return this;
     }
@@ -58,7 +53,7 @@ public class Inventory implements Serializable {
         return this.productId;
     }
 
-    public Inventory productId(UUID productId) {
+    public Purchase productId(UUID productId) {
         this.setProductId(productId);
         return this;
     }
@@ -67,43 +62,30 @@ public class Inventory implements Serializable {
         this.productId = productId;
     }
 
-    public Integer getAvailable() {
-        return this.available;
+    public Integer getQuantity() {
+        return this.quantity;
     }
 
-    public Inventory available(Integer available) {
-        this.setAvailable(available);
+    public Purchase quantity(Integer quantity) {
+        this.setQuantity(quantity);
         return this;
     }
 
-    public void setAvailable(Integer available) {
-        this.available = available;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
-    public Integer getReserved() {
-        return this.reserved;
+    public Instant getCreatedAt() {
+        return this.createdAt;
     }
 
-    public Inventory reserved(Integer reserved) {
-        this.setReserved(reserved);
+    public Purchase createdAt(Instant createdAt) {
+        this.setCreatedAt(createdAt);
         return this;
     }
 
-    public void setReserved(Integer reserved) {
-        this.reserved = reserved;
-    }
-
-    public Long getVersion() {
-        return this.version;
-    }
-
-    public Inventory version(Long version) {
-        this.setVersion(version);
-        return this;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -113,10 +95,10 @@ public class Inventory implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Inventory)) {
+        if (!(o instanceof Purchase)) {
             return false;
         }
-        return getId() != null && getId().equals(((Inventory) o).getId());
+        return getId() != null && getId().equals(((Purchase) o).getId());
     }
 
     @Override
@@ -128,12 +110,11 @@ public class Inventory implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "Inventory{" +
+        return "Purchase{" +
             "id=" + getId() +
-            ", productId='" + getProductId() + "'" +
-            ", available=" + getAvailable() +
-            ", reserved=" + getReserved() +
-            ", version=" + getVersion() +
+            ", productId=" + getProductId() +
+            ", quantity=" + getQuantity() +
+            ", createdAt='" + getCreatedAt() + "'" +
             "}";
     }
 }
